@@ -12,25 +12,25 @@ internal class Day04Test {
     }
 
     @Test
-    fun testOverlap() {
+    fun testContains() {
         assertFalse {
-            Day04.Assignment(2, 4).overlap(Day04.Assignment(6, 8))
+            Day04.Assignment(2, 4).contains(Day04.Assignment(6, 8))
         }
         assertFalse {
-            Day04.Assignment(5, 7).overlap(Day04.Assignment(7, 9))
+            Day04.Assignment(5, 7).contains(Day04.Assignment(7, 9))
         }
         assertTrue {
-            Day04.Assignment(2, 8).overlap(Day04.Assignment(3, 7))
+            Day04.Assignment(2, 8).contains(Day04.Assignment(3, 7))
         }
         assertTrue {
-            Day04.Assignment(3, 7).overlap(Day04.Assignment(2, 8))
+            Day04.Assignment(3, 7).contains(Day04.Assignment(2, 8))
         }
 
         assertTrue {
-            Day04.Assignment(6, 6).overlap(Day04.Assignment(4, 6))
+            Day04.Assignment(6, 6).contains(Day04.Assignment(4, 6))
         }
         assertTrue {
-            Day04.Assignment(4, 6).overlap(Day04.Assignment(6, 6))
+            Day04.Assignment(4, 6).contains(Day04.Assignment(6, 6))
         }
     }
 

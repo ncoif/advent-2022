@@ -6,7 +6,7 @@ import java.net.URL
 class Day04(private val input: URL) {
 
     data class Assignment(val start: Int, val end: Int) {
-        fun overlap(other: Assignment) : Boolean {
+        fun contains(other: Assignment) : Boolean {
             val otherContained = start <= other.start && other.end <= end
             val thisContained = other.start <= start && end <= other.end
             return otherContained || thisContained
@@ -37,7 +37,7 @@ class Day04(private val input: URL) {
     fun solvePart1(): Int {
         return File(input.toURI()).readLines()
             .map { extract(it) }
-            .count { it.first.overlap(it.second) }
+            .count { it.first.contains(it.second) }
 
     }
 }
