@@ -1,12 +1,12 @@
 package advent
 
 import org.junit.Test
+import kotlin.test.assertEquals
 
 internal class Day01Test {
     @Test
     fun readTestInput() {
-        val day01 = Day01("")
         val fileName = this.javaClass.getResource("/day01-test-input.txt")?.file!!
-        day01.readInput(fileName)
+        assertEquals(24000, Day01(fileName).solve())
     }
 }
