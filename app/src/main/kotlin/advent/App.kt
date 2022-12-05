@@ -8,7 +8,8 @@ class App {
     }
 
     fun solve() {
-        println(Day01(resource("/day01-input.txt")).solve())
+        println(Day01(resource("/day01-input.txt")).solvePart1())
+        println(Day01(resource("/day01-input.txt")).solvePart2())
     }
 }
 
