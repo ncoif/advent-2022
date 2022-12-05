@@ -1,12 +1,17 @@
 package advent
 
+import java.net.URL
+
 class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
+    private fun resource(filename: String) : URL {
+        return this.javaClass.getResource(filename)!!
+    }
+
+    fun solve() {
+        println(Day01(resource("/day01-input.txt")).solve())
+    }
 }
 
 fun main() {
-    println(App().greeting)
+    App().solve()
 }
