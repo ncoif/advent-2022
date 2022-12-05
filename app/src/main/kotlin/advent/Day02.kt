@@ -63,7 +63,8 @@ class Day02(private val input: URL) {
 
     fun solvePart1(): Int {
         return File(input.toURI()).readLines()
-            .map { extract(it) }.sumOf { score(it) }
+            .map { extract(it) }
+            .sumOf { score(it) }
     }
 
     private fun extractPart2(line: String) : Round {
