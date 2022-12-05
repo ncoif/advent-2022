@@ -1,7 +1,6 @@
 package advent
 
 import java.io.File
-import java.lang.IllegalStateException
 import java.net.URL
 
 class Day04(private val input: URL) {

@@ -1,7 +1,6 @@
 package advent
 
 import java.io.File
-import java.lang.IllegalStateException
 import java.net.URL
 
 class Day03(private val input: URL) {
@@ -47,18 +46,16 @@ class Day03(private val input: URL) {
     fun solvePart1(): Int {
         val bags = File(input.toURI()).readLines().map { extract(it) }
 
-        return bags.stream()
+        return bags
             .map { sharedItem(it) }
-            .mapToInt { it.priority }
-            .sum()
+            .sumOf { it.priority }
     }
 
     fun solvePart2(): Int {
         val bags = File(input.toURI()).readLines().map { extract(it) }
-        return bags.chunked(3).stream()
+        return bags.chunked(3)
             .map { sharedItem(it) }
-            .mapToInt{ it.priority}
-            .sum()
+            .sumOf{ it.priority}
     }
 
 }
