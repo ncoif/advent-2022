@@ -26,14 +26,19 @@ class Day03(private val input: URL) {
         }
     }
 
-    fun sharedItem(bag: Bag) : Item {
+    private fun sharedItem(bag: Bag) : Item {
         val firstCompartment = Bag(bag.items.subList(0, (bag.size() / 2)))
         val secondCompartment = Bag(bag.items.subList((bag.size() / 2), bag.size()))
 
-        val sharedItems = firstCompartment.items.intersect(secondCompartment.items)
+        val sharedItems = firstCompartment.items.intersect(secondCompartment.items.toSet())
 
-        if (sharedItems.size != 1) {
-            throw IllegalStateException("no shared item for bag $bag")
+        return sharedItems.first()
+    }
+
+    private fun sharedItem(bags: List<Bag>) : Item {
+        var sharedItems = bags.first().items.toSet()
+        for (bag in bags) {
+            sharedItems = sharedItems.intersect(bag.items.toSet())
         }
 
         return sharedItems.first()
@@ -45,6 +50,14 @@ class Day03(private val input: URL) {
         return bags.stream()
             .map { sharedItem(it) }
             .mapToInt { it.priority }
+            .sum()
+    }
+
+    fun solvePart2(): Int {
+        val bags = File(input.toURI()).readLines().map { extract(it) }
+        return bags.chunked(3).stream()
+            .map { sharedItem(it) }
+            .mapToInt{ it.priority}
             .sum()
     }
 
