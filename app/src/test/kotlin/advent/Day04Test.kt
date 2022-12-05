@@ -38,4 +38,36 @@ internal class Day04Test {
     fun solvePart1() {
         assertEquals(2, underTest().solvePart1())
     }
+
+    @Test
+    fun testOverlap() {
+        assertFalse {
+            Day04.Assignment(2, 4).overlap(Day04.Assignment(6, 8))
+        }
+        assertTrue {
+            Day04.Assignment(5, 7).overlap(Day04.Assignment(7, 9))
+        }
+        assertTrue {
+            Day04.Assignment(7, 9).overlap(Day04.Assignment(5, 7))
+        }
+        assertTrue {
+            Day04.Assignment(2, 8).overlap(Day04.Assignment(3, 7))
+        }
+        assertTrue {
+            Day04.Assignment(3, 7).overlap(Day04.Assignment(2, 8))
+        }
+        assertTrue {
+            Day04.Assignment(6, 6).overlap(Day04.Assignment(4, 6))
+        }
+        assertTrue {
+            Day04.Assignment(4, 6).overlap(Day04.Assignment(6, 6))
+        }
+    }
+
+
+    @Test
+    fun solvePart2() {
+        assertEquals(4, underTest().solvePart2())
+    }
+
 }

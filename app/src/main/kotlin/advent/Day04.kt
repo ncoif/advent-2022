@@ -11,6 +11,12 @@ class Day04(private val input: URL) {
             val thisContained = other.start <= start && end <= other.end
             return otherContained || thisContained
         }
+
+        fun overlap(other: Assignment): Boolean {
+            val otherOverlapped = (other.start in start..end) || (other.end in start..end)
+            val thisOverlapped = (start in other.start..other.end) || (end in other.start..other.end)
+            return otherOverlapped || thisOverlapped
+        }
     }
     data class Pair(val first: Assignment, val second: Assignment)
 
@@ -38,6 +44,11 @@ class Day04(private val input: URL) {
         return File(input.toURI()).readLines()
             .map { extract(it) }
             .count { it.first.contains(it.second) }
+    }
 
+    fun solvePart2(): Int {
+        return File(input.toURI()).readLines()
+            .map { extract(it) }
+            .count { it.first.overlap(it.second) }
     }
 }
