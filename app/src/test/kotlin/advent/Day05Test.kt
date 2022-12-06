@@ -33,4 +33,9 @@ internal class Day05Test {
         assertEquals("CMZ", underTest().solvePart1())
     }
 
+    @Test
+    fun solvePart2() {
+        assertEquals("MCD", underTest().solvePart2())
+    }
+
 }

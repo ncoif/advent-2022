@@ -32,6 +32,17 @@ class Day05(private val input: URL) {
             }
         }
 
+        fun applyPart2(move: Move) {
+            val crates = mutableListOf<Crate>()
+            for (i in 0 until move.quantity) {
+                crates.add(stacks[move.start-1].pop())
+            }
+
+            for (crate in crates.reversed()) {
+                stacks[move.end-1].push(crate)
+            }
+        }
+
         fun score() : List<Crate> {
             return stacks.map { it.top() }
         }
@@ -92,4 +103,18 @@ class Day05(private val input: URL) {
 
         return stacks.score().map { it.char }.joinToString ( separator = "" )
     }
+
+    fun solvePart2(): String {
+        val input =  File(input.toURI()).readLines()
+
+        val stacks = extractStacks(input)
+        val moves = extractMoves(input)
+
+        for (move in moves) {
+            stacks.applyPart2(move)
+        }
+
+        return stacks.score().map { it.char }.joinToString ( separator = "" )
+    }
+
 }
