@@ -6,8 +6,36 @@ import java.net.URL
 class Day05(private val input: URL) {
 
     data class Crate(val char: Char)
-    data class Stack(val crates: List<Crate>)
-    data class Stacks(val stacks: List<Stack>)
+    data class Stack(private val crateList: List<Crate>) {
+        var crates = crateList.toMutableList()
+
+        fun pop() : Crate {
+            val crate = crates.last()
+            crates = crates.dropLast(1).toMutableList()
+            return crate
+        }
+
+        fun push(crate: Crate) {
+            crates.add(crate)
+        }
+
+        fun top(): Crate {
+            return crates.last()
+        }
+    }
+
+    data class Stacks(val stacks: List<Stack>) {
+        fun apply(move: Move) {
+            for (i in 0 until move.quantity) {
+                val crate = stacks[move.start-1].pop()
+                stacks[move.end-1].push(crate)
+            }
+        }
+
+        fun score() : List<Crate> {
+            return stacks.map { it.top() }
+        }
+    }
 
     data class Move(val quantity: Int, val start: Int, val end: Int)
 
@@ -29,7 +57,11 @@ class Day05(private val input: URL) {
 
         val stacks = mutableListOf<Stack>()
         for (stackIdx in 0 until stackNumber) {
-            val stack = stackLines.map { it.chunked(4) }.map{it[stackIdx]}.filter { it.isNotBlank() }
+            val stack = stackLines
+                .map { it.chunked(4) }
+                .filter { it.size >= (stackIdx +1) }
+                .map{it[stackIdx]}
+                .filter { it.isNotBlank() }
 
             stacks.add(Stack(stack.map { Crate(it.toCharArray()[1]) }.reversed()))
         }
@@ -54,7 +86,10 @@ class Day05(private val input: URL) {
         val stacks = extractStacks(input)
         val moves = extractMoves(input)
 
+        for (move in moves) {
+            stacks.apply(move)
+        }
 
-        return ""
+        return stacks.score().map { it.char }.joinToString ( separator = "" )
     }
 }
