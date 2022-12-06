@@ -18,9 +18,28 @@ class Day06(private val input: URL) {
         return index
     }
 
+    fun markerMessage(message: String) : Int {
+        val chars = message.toCharArray().toList()
+        var index = 14
+        for (window in chars.windowed(14)) {
+            if (window.distinct().size != 14) {
+                index ++
+            } else {
+                break
+            }
+        }
+        return index
+    }
+
     fun solvePart1(): Int {
         val input = File(input.toURI()).readLines().first()
         return marker(input)
     }
+
+    fun solvePart2(): Int {
+        val input = File(input.toURI()).readLines().first()
+        return markerMessage(input)
+    }
+
 
 }

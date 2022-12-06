@@ -24,4 +24,17 @@ internal class Day06Test {
         assertEquals(7, underTest().solvePart1())
     }
 
+    @Test
+    fun testMarkerMessage() {
+        assertEquals(19, underTest().markerMessage("mjqjpqmgbljsphdztnvjfqwrcgsmlb"))
+        assertEquals(23, underTest().markerMessage("bvwbjplbgvbhsrlpgdmjqwftvncz"))
+        assertEquals(23, underTest().markerMessage("nppdvjthqldpwncqszvftbrmjlhg"))
+        assertEquals(29, underTest().markerMessage("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"))
+        assertEquals(26, underTest().markerMessage("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"))
+    }
+
+    @Test
+    fun solvePart2() {
+        assertEquals(19, underTest().solvePart2())
+    }
 }
