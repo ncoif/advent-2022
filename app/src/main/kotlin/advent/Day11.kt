@@ -31,11 +31,18 @@ class Day11(private val input: URL) {
         }
     }
 
-    data class Monkey(val monkeyId: MonkeyId, val operation: Operation, val condition: Condition, val items: MutableList<Item>) {
+    data class Monkey(
+        val monkeyId: MonkeyId,
+        val operation: Operation,
+        val condition: Condition,
+        val items: MutableList<Item>,
+        var processedCount: Int = 0) {
+
         private fun add(item: Item) = items.add(item)
 
         private fun processOneItem(monkeys: List<Monkey>) {
             val itemProcessed = items.removeAt(0)
+            processedCount += 1
 
             itemProcessed.apply(operation)
             itemProcessed.applyBoredom()
@@ -120,17 +127,25 @@ class Day11(private val input: URL) {
         for (monkey in monkeys) {
             monkey.processItems(monkeys)
         }
+        /*
         for (monkey in monkeys) {
             println("Monkey ${monkey.monkeyId}: ${monkey.items.map { it.worry }}")
         }
+        */
     }
 
     fun solvePart1(): Int {
         val lines = File(input.toURI()).readLines()
         val monkeys = parse(lines.iterator())
 
-        processOneRound(monkeys)
+        (0 until 20).forEach{ processOneRound(monkeys) }
 
-        return 0
+        val values = monkeys
+            .sortedBy { it.processedCount }
+            .reversed()
+            .map { it.processedCount }
+            .take(2)
+
+        return values[0] * values[1]
     }
 }

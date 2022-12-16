@@ -47,6 +47,10 @@ class App {
         println("\nDay10")
         println(Day10(resource("/day10-input.txt")).solvePart1())
         Day10(resource("/day10-input.txt")).solvePart2() // RFZEKBFA
+
+        println("\nDay11")
+        println(Day11(resource("/day11-input.txt")).solvePart1())
+        // 111547 too low
     }
 }
 
