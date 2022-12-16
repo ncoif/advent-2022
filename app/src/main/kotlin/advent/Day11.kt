@@ -9,6 +9,7 @@ class Day11(private val input: URL) {
     data class Item(var worry: Long) {
         fun apply(operation: Operation) {
             worry = operation.apply(worry)
+            require(worry >= 0) { "Long overflow!!"}
         }
 
         fun applyBoredom() {
@@ -36,24 +37,26 @@ class Day11(private val input: URL) {
         val operation: Operation,
         val condition: Condition,
         val items: MutableList<Item>,
-        var processedCount: Int = 0) {
+        var processedCount: Long = 0) {
 
         private fun add(item: Item) = items.add(item)
 
-        private fun processOneItem(monkeys: List<Monkey>) {
+        private fun processOneItem(monkeys: List<Monkey>, relief: Boolean = true) {
             val itemProcessed = items.removeAt(0)
             processedCount += 1
 
             itemProcessed.apply(operation)
-            itemProcessed.applyBoredom()
+            if (relief) {
+                itemProcessed.applyBoredom()
+            }
 
             val sendToMonkeyId = condition.test(itemProcessed)
             monkeys.first { it.monkeyId == sendToMonkeyId }.add(itemProcessed)
         }
 
-        fun processItems(monkeys: List<Monkey>) {
+        fun processItems(monkeys: List<Monkey>, relief: Boolean = true) {
             while(items.isNotEmpty()) {
-                processOneItem(monkeys)
+                processOneItem(monkeys, relief)
             }
         }
     }
@@ -123,9 +126,9 @@ class Day11(private val input: URL) {
         return monkeys
     }
 
-    fun processOneRound(monkeys: List<Monkey>) {
+    fun processOneRound(monkeys: List<Monkey>, relief: Boolean = true) {
         for (monkey in monkeys) {
-            monkey.processItems(monkeys)
+            monkey.processItems(monkeys, relief)
         }
 /*
         for (monkey in monkeys) {
@@ -134,14 +137,11 @@ class Day11(private val input: URL) {
 */
     }
 
-    fun solvePart1(): Int {
+    fun solvePart1(): Long {
         val lines = File(input.toURI()).readLines()
         val monkeys = parse(lines.iterator())
 
-        (0 until 20).forEach { it ->
-            //println("Round $it")
-            processOneRound(monkeys)
-        }
+        (0 until 20).forEach { _ -> processOneRound(monkeys) }
 
         val values = monkeys
             .sortedBy { it.processedCount }
@@ -151,4 +151,20 @@ class Day11(private val input: URL) {
 
         return values[0] * values[1]
     }
+
+    fun solvePart2(): Long {
+        val lines = File(input.toURI()).readLines()
+        val monkeys = parse(lines.iterator())
+
+        (0 until 10000).forEach { _ -> processOneRound(monkeys, false) }
+
+        val values = monkeys
+            .sortedBy { it.processedCount }
+            .reversed()
+            .map { it.processedCount }
+            .take(2)
+
+        return values[0] * values[1]
+    }
+
 }

@@ -68,8 +68,8 @@ Monkey 1: 2080, 25, 167, 207, 401, 1046
 Monkey 2:
 Monkey 3:
  */
-        assertEquals(listOf(20, 23, 27, 26), monkeys[0].items.map { it.worry })
-        assertEquals(listOf(2080, 25, 167, 207, 401, 1046), monkeys[1].items.map { it.worry })
+        assertEquals(listOf(20L, 23L, 27L, 26L), monkeys[0].items.map { it.worry })
+        assertEquals(listOf(2080L, 25L, 167L, 207L, 401L, 1046L), monkeys[1].items.map { it.worry })
         assertEquals(listOf(), monkeys[2].items.map { it.worry })
         assertEquals(listOf(), monkeys[3].items.map { it.worry })
 
@@ -81,8 +81,8 @@ Monkey 1: 43, 49, 58, 55, 362
 Monkey 2:
 Monkey 3:
  */
-        assertEquals(listOf(695, 10, 71, 135, 350), monkeys[0].items.map { it.worry })
-        assertEquals(listOf(43, 49, 58, 55, 362), monkeys[1].items.map { it.worry })
+        assertEquals(listOf(695L, 10L, 71L, 135L, 350L), monkeys[0].items.map { it.worry })
+        assertEquals(listOf(43L, 49L, 58L, 55L, 362L), monkeys[1].items.map { it.worry })
         assertEquals(listOf(), monkeys[2].items.map { it.worry })
         assertEquals(listOf(), monkeys[3].items.map { it.worry })
     }
@@ -93,4 +93,9 @@ Monkey 3:
         assertEquals(10605, Day11(testInput).solvePart1())
     }
 
+    @Test
+    fun solvePart2() {
+        val testInput = this.javaClass.getResource("/day11-test-input.txt")!!
+        assertEquals(2713310158L, Day11(testInput).solvePart2())
+    }
 }
