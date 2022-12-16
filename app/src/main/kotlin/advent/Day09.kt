@@ -2,6 +2,7 @@ package advent
 
 import java.io.File
 import java.net.URL
+import kotlin.math.abs
 
 class Day09(private val input: URL) {
 
@@ -76,8 +77,9 @@ class Day09(private val input: URL) {
             (0 until move.distance).forEach{ _ ->
                 playDirection(move.direction)
                 moveTail()
+                printDebug()
             }
-//            printDebug()
+            printDebug()
         }
 
         private fun playDirection(direction: Direction) {
@@ -92,12 +94,9 @@ class Day09(private val input: URL) {
                 if (!tailPosition[t].isNeighbour(previousTailPosition)) {
                     val newTailPosition = findNewTailPosition(t)
                     tailPosition[t] = newTailPosition
-
-                    if (t == ropeLength -1) {
-                        pastTailPositions.add(newTailPosition)
-                    }
                 }
             }
+            pastTailPositions.add(tailPosition[ropeLength - 1])
         }
 
         private fun findNewTailPosition(tailIdx: Int) : Position {
@@ -114,27 +113,47 @@ class Day09(private val input: URL) {
             return closestPosition
         }
 
+        data class DisplayBoard(val width: Int, val height: Int) {
+
+            private val board = mutableListOf<String>()
+            private val boardW = 2 * width + 1
+            private val boardH = 2 * height + 1
+            init {
+                (0 until boardW * boardH).forEach{ _ -> board.add(".") }
+            }
+
+            fun insertAt(w: Int, h: Int, value: String) {
+                board[(w + width) + boardW * (h + height)] = value
+            }
+
+            override fun toString(): String {
+                val sb = StringBuilder()
+                for (h in (0 until boardH).reversed()){
+                    for (w in 0 until boardW){
+                        sb.append(board[w + boardW * h])
+                    }
+                    sb.append(System.lineSeparator())
+                }
+                sb.append(System.lineSeparator())
+                return sb.toString()
+            }
+        }
+
         private fun printDebug() {
             val allPositions = mutableListOf(headPosition)
             tailPosition.forEach { allPositions.add(it) }
             pastTailPositions.forEach { allPositions.add(it) }
 
-            val width = allPositions.maxOf { it.x } + 1
-            val height = allPositions.maxOf { it.y } + 1
+            val width = allPositions.maxOf { abs(it.x) } + 1
+            val height = allPositions.maxOf { abs(it.y) } + 1
 
-            val board = mutableListOf<String>()
-            (0 until (width) * (height)).forEach{ _ -> board.add(".") }
+            val displayBoard = DisplayBoard(width, height)
+
             //pastTailPositions.forEach { board[it.x + width * it.y] = "#" }
-            tailPosition.forEachIndexed{ idx, element -> board[element.x + width * element.y] = (idx + 1).toString() }
-            board[headPosition.x + width * headPosition.y] = "H"
+            tailPosition.forEachIndexed{ idx, element -> displayBoard.insertAt(element.x, element.y, (idx + 1).toString()) }
+            displayBoard.insertAt(headPosition.x, headPosition.y, "H")
 
-            for (h in height - 1 downTo 0){
-                for (w in 0 until width){
-                    print(board[w + width * h])
-                }
-                println()
-            }
-            println("====================")
+            println(displayBoard)
         }
     }
 
