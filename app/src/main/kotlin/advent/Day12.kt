@@ -1,15 +1,17 @@
 package advent
 
+import edu.princeton.cs.algorithms.DijkstraAllPairsSP
 import edu.princeton.cs.algorithms.DijkstraSP
 import edu.princeton.cs.algorithms.DirectedEdge
 import edu.princeton.cs.algorithms.EdgeWeightedDigraph
 import java.io.File
 import java.net.URL
+import kotlin.math.roundToInt
 
 class Day12(private val input: URL) {
 
     data class Elevation(val index: Int, val height: Int, val isStart: Boolean = false, val isEnd: Boolean = false)
-    data class Grid(private val width: Int, private val height: Int, private val elevations: List<Elevation>) {
+    data class Grid(private val width: Int, private val height: Int, val elevations: List<Elevation>) {
 
         private fun position(w: Int, h: Int) = (elevations[w + h * width])
 
@@ -41,7 +43,7 @@ class Day12(private val input: URL) {
                     val neighbours = neighbours(w, h)
                     val connectedNeighbours = neighbours.filter { (it.height - current.height) <= 1 }
                     for (neighbour in connectedNeighbours) {
-                        val edge = DirectedEdge(current.index, neighbour.index, 1.0)
+                        val edge = DirectedEdge(neighbour.index, current.index, 1.0)
                         graph.addEdge(edge)
                     }
                 }
@@ -79,11 +81,24 @@ class Day12(private val input: URL) {
 
         val graph = grid.toGraph()
 
-        val dijkstra = DijkstraSP(graph, grid.start().index)
+        val dijkstra = DijkstraSP(graph, grid.end().index)
 
-        val path = dijkstra.pathTo(grid.end().index)
+        val path = dijkstra.pathTo(grid.start().index)
         val pathList = path.iterator().asSequence().toList()
 
         return pathList.size
     }
+
+    fun solvePart2(): Int {
+        val lines = File(input.toURI()).readLines()
+        val grid = parse(lines)
+
+        val dijkstra = DijkstraSP(grid.toGraph(), grid.end().index)
+
+        return grid.elevations
+            .filter { it.height == 0 }
+            .minOf { dijkstra.distTo(it.index) }
+            .toInt()
+    }
+
 }
