@@ -66,24 +66,25 @@ class Day09(private val input: URL) {
         }
     }
 
-    data class State(var headPosition : Position, var tailPosition: Position, val pastPositions : MutableSet<Position>) {
+    data class State(var headPosition : Position, var tailPosition: Position, val pastTailPositions : MutableSet<Position>) {
         fun playMove(move: Move) {
+            //println(move)
             (0 until move.distance).forEach{ _ ->
                 playDirection(move.direction)
                 moveTail()
+                //printDebug()
             }
         }
 
         private fun playDirection(direction: Direction) {
             val newHeadPosition = headPosition.applyDirection(direction)
-            pastPositions.add(newHeadPosition)
             headPosition = newHeadPosition
         }
 
         private fun moveTail() {
             if (!tailPosition.isNeighbour(headPosition)) {
                 val newTailPosition = findNewTailPosition()
-                pastPositions.add(newTailPosition)
+                pastTailPositions.add(newTailPosition)
                 tailPosition = newTailPosition
             }
         }
@@ -101,6 +102,28 @@ class Day09(private val input: URL) {
             }
             return closestPosition
         }
+
+        fun printDebug() {
+            val allPositions = mutableListOf(headPosition, tailPosition)
+            pastTailPositions.forEach { allPositions.add(it) }
+
+            val width = allPositions.maxOf { it.x } + 1
+            val height = allPositions.maxOf { it.y } + 1
+
+            val board = mutableListOf<String>()
+            (0 until (width) * (height)).forEach{ _ -> board.add(".") }
+            pastTailPositions.forEach { board[it.x + width * it.y] = "#" }
+            board[tailPosition.x + width * tailPosition.y] = "T"
+            board[headPosition.x + width * headPosition.y] = "H"
+
+            for (h in height - 1 downTo 0){
+                for (w in 0 until width){
+                    print(board[w + width * h])
+                }
+                println()
+            }
+            println("====================")
+        }
     }
 
     private fun initialState() : State {
@@ -112,10 +135,10 @@ class Day09(private val input: URL) {
         val moves = input.map { extractMove(it) }
 
         val state = initialState()
+
         moves.forEach { state.playMove(it) }
 
-        println(state)
-        return state.pastPositions.size
+        return state.pastTailPositions.size
     }
 
 }
