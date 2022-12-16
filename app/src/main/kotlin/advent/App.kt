@@ -50,7 +50,7 @@ class App {
 
         println("\nDay11")
         println(Day11(resource("/day11-input.txt")).solvePart1())
-        // 111547 too low
+        println(Day11(resource("/day11-input.txt")).solvePart2())
     }
 }
 

@@ -15,6 +15,10 @@ class Day11(private val input: URL) {
         fun applyBoredom() {
             worry /= 3
         }
+
+        fun primeDenominator(denominator: Long) {
+            worry %= denominator
+        }
     }
 
     enum class OperationType { ADD, MULTIPLY, SQUARE}
@@ -26,7 +30,7 @@ class Day11(private val input: URL) {
         }
     }
 
-    data class Condition(private val divisibleBy: Long, val monkeyIdTrue: MonkeyId, val monkeyIdFalse: MonkeyId) {
+    data class Condition(val divisibleBy: Long, val monkeyIdTrue: MonkeyId, val monkeyIdFalse: MonkeyId) {
         fun test(item: Item): MonkeyId {
             return if (item.worry % divisibleBy == 0L) { monkeyIdTrue } else { monkeyIdFalse }
         }
@@ -41,7 +45,7 @@ class Day11(private val input: URL) {
 
         private fun add(item: Item) = items.add(item)
 
-        private fun processOneItem(monkeys: List<Monkey>, relief: Boolean = true) {
+        private fun processOneItem(monkeys: List<Monkey>, relief: Boolean = true, denominator: Long?) {
             val itemProcessed = items.removeAt(0)
             processedCount += 1
 
@@ -50,13 +54,17 @@ class Day11(private val input: URL) {
                 itemProcessed.applyBoredom()
             }
 
+            if (denominator != null) {
+                itemProcessed.primeDenominator(denominator)
+            }
+
             val sendToMonkeyId = condition.test(itemProcessed)
             monkeys.first { it.monkeyId == sendToMonkeyId }.add(itemProcessed)
         }
 
-        fun processItems(monkeys: List<Monkey>, relief: Boolean = true) {
+        fun processItems(monkeys: List<Monkey>, relief: Boolean = true, denominator: Long? = null) {
             while(items.isNotEmpty()) {
-                processOneItem(monkeys, relief)
+                processOneItem(monkeys, relief, denominator)
             }
         }
     }
@@ -126,15 +134,22 @@ class Day11(private val input: URL) {
         return monkeys
     }
 
-    fun processOneRound(monkeys: List<Monkey>, relief: Boolean = true) {
+    fun processOneRound(monkeys: List<Monkey>, relief: Boolean = true, denominator: Long? = null) {
         for (monkey in monkeys) {
-            monkey.processItems(monkeys, relief)
+            monkey.processItems(monkeys, relief, denominator)
         }
 /*
         for (monkey in monkeys) {
             println("Monkey ${monkey.monkeyId}: ${monkey.items.map { it.worry }}")
         }
 */
+    }
+
+    fun primeDenominator(monkeys: List<Monkey>) : Long {
+        return monkeys
+            .map { it.condition }
+            .map { it.divisibleBy }
+            .reduce { a, b -> a * b }
     }
 
     fun solvePart1(): Long {
@@ -156,7 +171,9 @@ class Day11(private val input: URL) {
         val lines = File(input.toURI()).readLines()
         val monkeys = parse(lines.iterator())
 
-        (0 until 10000).forEach { _ -> processOneRound(monkeys, false) }
+        val denominator = primeDenominator(monkeys)
+
+        (0 until 10000).forEach { _ -> processOneRound(monkeys, false, denominator) }
 
         val values = monkeys
             .sortedBy { it.processedCount }
