@@ -102,6 +102,8 @@ class Day14(private val input: URL) {
                 }
             }
         }
+
+        fun countSand() = cells.count { it == Type.SAND }
     }
 
     private fun parse(lines: List<String>) : List<RockLine> {
@@ -140,8 +142,7 @@ class Day14(private val input: URL) {
         while(canAddMoreSand) {
             canAddMoreSand = grid.simulateOneSand()
         }
-        grid.print()
 
-        return 0
+        return grid.countSand()
     }
 }
