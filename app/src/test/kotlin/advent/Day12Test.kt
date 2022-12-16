@@ -10,14 +10,12 @@ internal class Day12Test {
         return Day12(testInput)
     }
 
-
     @Test
-    fun testElevationPriority() {
+    fun testElevation() {
         assertEquals(0, underTest().elevation('a'))
         assertEquals(15, underTest().elevation('p'))
         assertEquals(25, underTest().elevation('z'))
     }
-
 
     @Test
     fun solvePart1() {

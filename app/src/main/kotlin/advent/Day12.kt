@@ -1,5 +1,6 @@
 package advent
 
+import edu.princeton.cs.algorithms.DijkstraSP
 import edu.princeton.cs.algorithms.DirectedEdge
 import edu.princeton.cs.algorithms.EdgeWeightedDigraph
 import java.io.File
@@ -13,19 +14,22 @@ class Day12(private val input: URL) {
 
         private fun position(w: Int, h: Int) = (elevations[w + h * width])
 
+        fun start() = (elevations.first { it.isStart })
+        fun end() = (elevations.first { it.isEnd })
+
         private fun neighbours(w: Int, h: Int): List<Elevation> {
             val neighbours = mutableListOf<Elevation>()
-            if (w > 0 && h > 0 ) {
-                neighbours.add(position(w - 1, h - 1))
+            if (w > 0) {
+                neighbours.add(position(w - 1, h))
             }
-            if (w > 0 && h < height - 1) {
-                neighbours.add(position(w - 1, h + 1))
+            if (w < width - 1) {
+                neighbours.add(position(w + 1, h))
             }
-            if (w < width - 1 && h > 0) {
-                neighbours.add(position(w + 1, h - 1))
+            if (h > 0) {
+                neighbours.add(position(w, h - 1))
             }
-            if (w < width - 1 && h < height - 1) {
-                neighbours.add(position(w + 1, h + 1))
+            if (h < height - 1) {
+                neighbours.add(position(w, h + 1))
             }
             return neighbours
         }
@@ -36,9 +40,9 @@ class Day12(private val input: URL) {
                 for (h in 0 until height) {
                     val current = position(w, h)
                     val neighbours = neighbours(w, h)
-                    val connectedNeighbours = neighbours.filter { abs(it.height - current.height) == 1 }
+                    val connectedNeighbours = neighbours.filter { abs(it.height - current.height) <= 1 }
                     for (neighbour in connectedNeighbours) {
-                        val edge: DirectedEdge = DirectedEdge(current.index, neighbour.index, 1.0)
+                        val edge = DirectedEdge(current.index, neighbour.index, 1.0)
                         graph.addEdge(edge)
                     }
                 }
@@ -70,11 +74,17 @@ class Day12(private val input: URL) {
         return Grid(lines[0].length, lines.size, elevations)
     }
 
-    fun solvePart1(): Long {
+    fun solvePart1(): Int {
         val lines = File(input.toURI()).readLines()
         val grid = parse(lines)
         val graph = grid.toGraph()
 
-        return 0
+        val dijkstra = DijkstraSP(graph, grid.start().index)
+        require(dijkstra.hasPathTo(grid.end().index)) { "No path found" }
+
+        val path = dijkstra.pathTo(grid.end().index)
+        val pathList = path.iterator().asSequence().toList()
+
+        return pathList.size
     }
 }
