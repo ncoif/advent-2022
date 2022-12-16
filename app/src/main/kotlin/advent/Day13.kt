@@ -14,7 +14,6 @@ class Day13(private val input: URL) {
         val leftNode = objectMapper.readTree(left)
         val rightNode = objectMapper.readTree(right)
 
-        // if bo
         return compareArray(leftNode, rightNode)!!
     }
 
@@ -76,10 +75,21 @@ class Day13(private val input: URL) {
     }
 
     fun solvePart1(): Int {
-        val lines = File(input.toURI()).readLines()
+        val lines = File(input.toURI()).readLines().iterator()
+        val pairResult = mutableListOf<Boolean>()
+        while (lines.hasNext()) {
+            pairResult.add(comparePair(lines.next(), lines.next()))
 
-        return 0
+            // if there is an empty line, skip it
+            if (lines.hasNext()) {
+                lines.next()
+            }
+        }
+
+        return pairResult
+            .mapIndexed { index, b -> Pair(index, b) }
+            .filter { pair -> pair.second }
+            .sumOf { pair -> pair.first + 1 } // +1 because 0-based index
     }
-
 
 }
