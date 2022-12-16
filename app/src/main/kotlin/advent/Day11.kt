@@ -6,14 +6,50 @@ import java.net.URL
 class Day11(private val input: URL) {
 
     data class MonkeyId(private val id: Int)
-    data class Item(var worry: Int)
+    data class Item(var worry: Int) {
+        fun apply(operation: Operation) {
+            worry = operation.apply(worry)
+        }
+
+        fun applyBoredom() {
+            worry /= 3
+        }
+    }
 
     enum class OperationType { ADD, MULTIPLY, SQUARE}
-    data class Operation(private val type: OperationType, private val amount: Int?)
+    data class Operation(private val type: OperationType, private val amount: Int?) {
+        fun apply(value: Int) = when(type) {
+            OperationType.ADD -> value + (amount ?: 0)
+            OperationType.MULTIPLY -> value * (amount ?: 0)
+            OperationType.SQUARE -> value * value
+        }
+    }
 
-    data class Condition(private val divisibleBy: Int, val monkeyIdTrue: MonkeyId, val monkeyIdFalse: MonkeyId)
+    data class Condition(private val divisibleBy: Int, val monkeyIdTrue: MonkeyId, val monkeyIdFalse: MonkeyId) {
+        fun test(item: Item): MonkeyId {
+            return if (item.worry % divisibleBy == 0) { monkeyIdTrue } else { monkeyIdFalse }
+        }
+    }
 
-    data class Monkey(val monkeyId: MonkeyId, val operation: Operation, val condition: Condition, val items: MutableList<Item>)
+    data class Monkey(val monkeyId: MonkeyId, val operation: Operation, val condition: Condition, val items: MutableList<Item>) {
+        private fun add(item: Item) = items.add(item)
+
+        private fun processOneItem(monkeys: List<Monkey>) {
+            val itemProcessed = items.removeAt(0)
+
+            itemProcessed.apply(operation)
+            itemProcessed.applyBoredom()
+
+            val sendToMonkeyId = condition.test(itemProcessed)
+            monkeys.first { it.monkeyId == sendToMonkeyId }.add(itemProcessed)
+        }
+
+        fun processItems(monkeys: List<Monkey>) {
+            while(items.isNotEmpty()) {
+                processOneItem(monkeys)
+            }
+        }
+    }
 
     private fun parseMonkeyId(line: String): MonkeyId {
         //Monkey 0:
@@ -80,8 +116,21 @@ class Day11(private val input: URL) {
         return monkeys
     }
 
+    fun processOneRound(monkeys: List<Monkey>) {
+        for (monkey in monkeys) {
+            monkey.processItems(monkeys)
+        }
+        for (monkey in monkeys) {
+            println("Monkey ${monkey.monkeyId}: ${monkey.items.map { it.worry }}")
+        }
+    }
+
     fun solvePart1(): Int {
-        val input = File(input.toURI()).readLines()
+        val lines = File(input.toURI()).readLines()
+        val monkeys = parse(lines.iterator())
+
+        processOneRound(monkeys)
+
         return 0
     }
 }

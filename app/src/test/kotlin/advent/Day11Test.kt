@@ -55,6 +55,39 @@ Monkey 2:
     }
 
     @Test
+    fun testProcessOneRound() {
+        val testInput = this.javaClass.getResource("/day11-test-input.txt")!!
+        val underTest = Day11(testInput)
+        val monkeys = underTest.parse(File(testInput.toURI()).readLines().iterator())
+
+        underTest.processOneRound(monkeys)
+
+/*
+Monkey 0: 20, 23, 27, 26
+Monkey 1: 2080, 25, 167, 207, 401, 1046
+Monkey 2:
+Monkey 3:
+ */
+        assertEquals(listOf(20, 23, 27, 26), monkeys[0].items.map { it.worry })
+        assertEquals(listOf(2080, 25, 167, 207, 401, 1046), monkeys[1].items.map { it.worry })
+        assertEquals(listOf(), monkeys[2].items.map { it.worry })
+        assertEquals(listOf(), monkeys[3].items.map { it.worry })
+
+        underTest.processOneRound(monkeys)
+
+/*
+Monkey 0: 695, 10, 71, 135, 350
+Monkey 1: 43, 49, 58, 55, 362
+Monkey 2:
+Monkey 3:
+ */
+        assertEquals(listOf(695, 10, 71, 135, 350), monkeys[0].items.map { it.worry })
+        assertEquals(listOf(43, 49, 58, 55, 362), monkeys[1].items.map { it.worry })
+        assertEquals(listOf(), monkeys[2].items.map { it.worry })
+        assertEquals(listOf(), monkeys[3].items.map { it.worry })
+    }
+
+    @Test
     fun solvePart1() {
         val testInput = this.javaClass.getResource("/day11-test-input.txt")!!
         assertEquals(10605, Day11(testInput).solvePart1())
