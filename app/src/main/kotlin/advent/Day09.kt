@@ -66,14 +66,18 @@ class Day09(private val input: URL) {
         }
     }
 
-    data class State(var headPosition : Position, var tailPosition: Position, val pastTailPositions : MutableSet<Position>) {
+    data class State(
+        var headPosition : Position,
+        var ropeLength: Int, var tailPosition: Array<Position>,
+        val pastTailPositions : MutableSet<Position>) {
+
         fun playMove(move: Move) {
-            //println(move)
+            println(move)
             (0 until move.distance).forEach{ _ ->
                 playDirection(move.direction)
                 moveTail()
-                //printDebug()
             }
+//            printDebug()
         }
 
         private fun playDirection(direction: Direction) {
@@ -82,18 +86,25 @@ class Day09(private val input: URL) {
         }
 
         private fun moveTail() {
-            if (!tailPosition.isNeighbour(headPosition)) {
-                val newTailPosition = findNewTailPosition()
-                pastTailPositions.add(newTailPosition)
-                tailPosition = newTailPosition
+            for (t in 0 until ropeLength) {
+                val previousTailPosition = if (t == 0) { headPosition } else { tailPosition[t - 1] }
+
+                if (!tailPosition[t].isNeighbour(previousTailPosition)) {
+                    val newTailPosition = findNewTailPosition(t)
+                    tailPosition[t] = newTailPosition
+
+                    if (t == ropeLength -1) {
+                        pastTailPositions.add(newTailPosition)
+                    }
+                }
             }
         }
 
-        private fun findNewTailPosition() : Position {
+        private fun findNewTailPosition(tailIdx: Int) : Position {
             // try all neighbour position until one is valid
             var minDistance = 1000
-            var closestPosition = tailPosition
-            for (neighbour in tailPosition.allNeighbour()) {
+            var closestPosition = tailPosition[tailIdx]
+            for (neighbour in tailPosition[tailIdx].allNeighbour()) {
                 val distanceToHead = neighbour.distance(headPosition)
                 if (distanceToHead < minDistance) {
                     minDistance = distanceToHead
@@ -103,8 +114,9 @@ class Day09(private val input: URL) {
             return closestPosition
         }
 
-        fun printDebug() {
-            val allPositions = mutableListOf(headPosition, tailPosition)
+        private fun printDebug() {
+            val allPositions = mutableListOf(headPosition)
+            tailPosition.forEach { allPositions.add(it) }
             pastTailPositions.forEach { allPositions.add(it) }
 
             val width = allPositions.maxOf { it.x } + 1
@@ -112,8 +124,8 @@ class Day09(private val input: URL) {
 
             val board = mutableListOf<String>()
             (0 until (width) * (height)).forEach{ _ -> board.add(".") }
-            pastTailPositions.forEach { board[it.x + width * it.y] = "#" }
-            board[tailPosition.x + width * tailPosition.y] = "T"
+            //pastTailPositions.forEach { board[it.x + width * it.y] = "#" }
+            tailPosition.forEachIndexed{ idx, element -> board[element.x + width * element.y] = (idx + 1).toString() }
             board[headPosition.x + width * headPosition.y] = "H"
 
             for (h in height - 1 downTo 0){
@@ -126,19 +138,32 @@ class Day09(private val input: URL) {
         }
     }
 
-    private fun initialState() : State {
-        return State(Position(0, 0), Position(0, 0), mutableSetOf(Position(0, 0)))
+    private fun initialState(ropeLength: Int) : State {
+        val rope = Array(ropeLength) { _ -> Position(0, 0) }
+        return State(Position(0, 0), ropeLength, rope, mutableSetOf(Position(0, 0)))
     }
 
     fun solvePart1(): Int {
         val input = File(input.toURI()).readLines()
         val moves = input.map { extractMove(it) }
 
-        val state = initialState()
+        val state = initialState(1)
 
         moves.forEach { state.playMove(it) }
 
         return state.pastTailPositions.size
     }
+
+    fun solvePart2(): Int {
+        val input = File(input.toURI()).readLines()
+        val moves = input.map { extractMove(it) }
+
+        val state = initialState(9)
+
+        moves.forEach { state.playMove(it) }
+
+        return state.pastTailPositions.size
+    }
+
 
 }
