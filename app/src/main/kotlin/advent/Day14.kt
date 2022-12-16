@@ -31,6 +31,7 @@ class Day14(private val input: URL) {
         private fun y(y: Int) = y - offsetY
 
         private fun position(x: Int, y: Int, type: Type) {
+            require(0 <= x(x) && x(x) < width ) { "out of bound" }
             cells[x(x) + y(y) * width] = type
         }
 
@@ -38,6 +39,10 @@ class Day14(private val input: URL) {
 
         fun isOutsideGrid(x: Int, y: Int) : Boolean {
             return (x(x) < 0 || x(x) >= width || y(y) < 0 || y(y) >= height)
+        }
+
+        fun isBottom(y: Int) : Boolean {
+            return y(y) >= height
         }
 
         fun print() {
@@ -103,6 +108,36 @@ class Day14(private val input: URL) {
             }
         }
 
+        // return true if the sand was placed, false if the sand reach the start
+        fun simulateOneSandPart2() : Boolean {
+            var current = Point(500, 0)
+            var canMove = true
+            while (canMove) {
+                if (isBottom(current.y + 1)) {
+                    position(current.x, current.y, Type.SAND)
+                    canMove = false
+                } else if (position(current.x, current.y + 1) == Type.AIR) {
+                    // can move under
+                    current = Point(current.x, current.y + 1)
+                } else if (position(current.x - 1, current.y + 1) == Type.AIR) {
+                    // can move diagonal left
+                    current = Point(current.x - 1, current.y + 1)
+                } else if (position(current.x + 1, current.y + 1) == Type.AIR) {
+                    // can move diagonal right
+                    current = Point(current.x + 1, current.y + 1)
+                } else {
+                    // cannot move
+                    position(current.x, current.y, Type.SAND)
+                    canMove = false
+                }
+
+                if (current.x == 500 && current.y == 0) {
+                    return false
+                }
+            }
+            return true
+        }
+
         fun countSand() = cells.count { it == Type.SAND }
     }
 
@@ -118,13 +153,14 @@ class Day14(private val input: URL) {
     }
 
     private fun makeGrid(rockLines: List<RockLine>) : Grid {
-        val maxX = rockLines.flatMap { it.points }.maxOf { it.x }
-        val minX = rockLines.flatMap { it.points }.minOf { it.x }
+        val paddingX = 1000
+        val maxX = rockLines.flatMap { it.points }.maxOf { it.x } + paddingX
+        val minX = rockLines.flatMap { it.points }.minOf { it.x } - paddingX
         val gridWidth = maxX - minX + 1
 
         val maxY = rockLines.flatMap { it.points }.maxOf { it.y }
         val minY = 0
-        val gridHeight = maxY - minY + 1
+        val gridHeight = maxY - minY + 1 + 1
 
         val grid = Grid(gridWidth, gridHeight, offsetX = minX, offsetY = 0)
 
@@ -141,6 +177,20 @@ class Day14(private val input: URL) {
         var canAddMoreSand = true
         while(canAddMoreSand) {
             canAddMoreSand = grid.simulateOneSand()
+        }
+
+        return grid.countSand()
+    }
+
+    fun solvePart2(): Int {
+        val lines = File(input.toURI()).readLines()
+        val rockLines = parse(lines)
+        val grid = makeGrid(rockLines)
+
+        var canAddMoreSand = true
+        while(canAddMoreSand) {
+            canAddMoreSand = grid.simulateOneSandPart2()
+            //grid.print()
         }
 
         return grid.countSand()

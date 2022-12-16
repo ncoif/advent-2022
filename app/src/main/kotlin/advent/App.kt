@@ -62,6 +62,7 @@ class App {
 
         println("\nDay14")
         println(Day14(resource("/day14-input.txt")).solvePart1())
+        println(Day14(resource("/day14-input.txt")).solvePart2())
     }
 }
 
