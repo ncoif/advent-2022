@@ -23,4 +23,10 @@ internal class Day15Test {
     fun solvePart1() {
         assertEquals(26, underTest().solvePart1(y = 10))
     }
+
+    @Test
+    fun solvePart2() {
+        assertEquals(56000011, underTest().solvePart2(space = 20))
+    }
+
 }

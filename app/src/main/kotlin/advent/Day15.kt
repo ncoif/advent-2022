@@ -10,6 +10,12 @@ class Day15(private val input: URL) {
 
     data class Point(val x: Int, val y: Int) {
         fun distanceTo(point: Point) = abs(x - point.x) + abs(y - point.y)
+
+        fun tuningFrequency(): Int {
+            val result = x * 4000000 + y
+            require(result > 0) { "overflow" }
+            return result
+        }
     }
     data class Sensor(val id: Int, val position: Point, val beacon: Point) {
         private val distance = position.distanceTo(beacon)
@@ -46,6 +52,16 @@ class Day15(private val input: URL) {
         return this.any { it.isInBeaconExclusionZone(point) }
     }
 
+    private fun List<Sensor>.isNotInBeaconExclusionZone(point: Point) : Boolean {
+        return this.none { it.isInBeaconExclusionZone(point) }
+    }
+
+    private fun searchPoints(space: Int) : List<Point> {
+        return (0..space).flatMap { y ->
+            (0..space).map { x -> Point(x, y) }
+        }
+    }
+
     fun solvePart1(y: Int): Int {
         val lines = File(input.toURI()).readLines()
         val sensors = lines.mapIndexed{ idx, line -> parse(idx, line) }
@@ -57,5 +73,16 @@ class Day15(private val input: URL) {
             .filter { !allBeacons.contains(it) }
             .distinct()
             .count { sensors.isInBeaconExclusionZone(it) }
+    }
+
+    fun solvePart2(space: Int): Int {
+        val lines = File(input.toURI()).readLines()
+        val sensors = lines.mapIndexed{ idx, line -> parse(idx, line) }
+
+        val distressBeacon = searchPoints(space)
+            .filter { sensors.isNotInBeaconExclusionZone(it) }
+        require(distressBeacon.size == 1) { "Found more than one position for distress beacon" }
+
+        return distressBeacon.first().tuningFrequency()
     }
 }
