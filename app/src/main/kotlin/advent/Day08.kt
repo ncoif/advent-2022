@@ -6,7 +6,7 @@ import java.net.URL
 class Day08(private val input: URL) {
 
     data class Tree(val height: Int)
-    data class Grid(val width: Int, val height: Int, val trees: List<Tree>) {
+    data class Grid(private val width: Int, private val height: Int, val trees: List<Tree>) {
         fun position(w: Int, h: Int) : Tree {
             return trees[w + h * width]
         }
@@ -35,14 +35,7 @@ class Day08(private val input: URL) {
         }
 
         private fun isVisible(tree: Tree, neighbours: List<Tree>) : Boolean {
-            var visible = true
-            for (neighbour in neighbours) {
-                if (neighbour.height >= tree.height) {
-                    visible = false
-                    break
-                }
-            }
-            return visible
+            return neighbours.all { it.height < tree.height }
         }
 
         fun scenicScore(w: Int, h: Int) : Int {
@@ -64,11 +57,17 @@ class Day08(private val input: URL) {
             }
             return viewingDistance
         }
+
+        fun allPosition(): List<Pair<Int, Int>> {
+            return (0 until height).flatMap { w ->
+                (0 until width).map { Pair(w, it) }
+            }
+        }
     }
 
     fun parseGrid(lines: List<String>) : Grid {
         val trees = lines.flatMap {
-            it.toCharArray().map{ height -> Tree(height.digitToInt()) }
+            line -> line.toCharArray().map{ height -> Tree(height.digitToInt()) }
         }
 
         return Grid(lines[0].length, lines.size, trees)
@@ -77,27 +76,14 @@ class Day08(private val input: URL) {
     fun solvePart1(): Int {
         val grid = parseGrid(File(input.toURI()).readLines())
 
-        var visibleCount = 0
-        for (w in 0 until grid.width) {
-            for (h in 0 until grid.height) {
-                if (grid.isVisibleFromOutside(w, h)) {
-                    visibleCount += 1
-                }
-            }
-        }
-
-        return visibleCount
+        return grid.allPosition()
+            .count { grid.isVisibleFromOutside(it.first, it.second) }
     }
 
     fun solvePart2(): Int {
         val grid = parseGrid(File(input.toURI()).readLines())
 
-        var maxScenicScore = 0
-        for (w in 0 until grid.width) {
-            for (h in 0 until grid.height) {
-                maxScenicScore = maxOf(maxScenicScore, grid.scenicScore(w, h))
-            }
-        }
-        return maxScenicScore
+        return grid.allPosition()
+            .maxOf { grid.scenicScore(it.first, it.second) }
     }
 }
