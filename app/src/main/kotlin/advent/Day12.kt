@@ -5,7 +5,6 @@ import edu.princeton.cs.algorithms.DirectedEdge
 import edu.princeton.cs.algorithms.EdgeWeightedDigraph
 import java.io.File
 import java.net.URL
-import kotlin.math.abs
 
 class Day12(private val input: URL) {
 
@@ -36,11 +35,11 @@ class Day12(private val input: URL) {
 
         fun toGraph(): EdgeWeightedDigraph {
             val graph = EdgeWeightedDigraph(elevations.size)
-            for (w in 0 until width) {
-                for (h in 0 until height) {
+            for (h in 0 until height) {
+                for (w in 0 until width) {
                     val current = position(w, h)
                     val neighbours = neighbours(w, h)
-                    val connectedNeighbours = neighbours.filter { abs(it.height - current.height) <= 1 }
+                    val connectedNeighbours = neighbours.filter { (it.height - current.height) <= 1 }
                     for (neighbour in connectedNeighbours) {
                         val edge = DirectedEdge(current.index, neighbour.index, 1.0)
                         graph.addEdge(edge)
@@ -77,10 +76,10 @@ class Day12(private val input: URL) {
     fun solvePart1(): Int {
         val lines = File(input.toURI()).readLines()
         val grid = parse(lines)
+
         val graph = grid.toGraph()
 
         val dijkstra = DijkstraSP(graph, grid.start().index)
-        require(dijkstra.hasPathTo(grid.end().index)) { "No path found" }
 
         val path = dijkstra.pathTo(grid.end().index)
         val pathList = path.iterator().asSequence().toList()
