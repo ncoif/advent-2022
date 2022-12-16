@@ -82,4 +82,10 @@ internal class Day13Test {
         assertEquals(13, Day13(testInput).solvePart1())
     }
 
+    @Test
+    fun solvePart2() {
+        val testInput = this.javaClass.getResource("/day13-test-input.txt")!!
+        assertEquals(140, Day13(testInput).solvePart2())
+    }
+
 }
