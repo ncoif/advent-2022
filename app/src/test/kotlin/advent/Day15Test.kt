@@ -1,6 +1,7 @@
 package advent
 
 import advent.Day15.Point
+import advent.Day15.Sensor
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -17,6 +18,13 @@ internal class Day15Test {
         assertEquals(1, Point(0, 0).distanceTo(Point(1, 0)))
         assertEquals(1, Point(0, 0).distanceTo(Point(0, 1)))
         assertEquals(2, Point(0, 0).distanceTo(Point(1, 1)))
+    }
+
+    @Test
+    fun testBorder() {
+        val sensor = Sensor(0, Point(0, 0), Point(1, 0))
+        val borderPoints = sensor.borderPoints()
+        assertEquals(8, borderPoints.size)
     }
 
     @Test

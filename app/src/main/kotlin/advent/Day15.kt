@@ -25,6 +25,12 @@ class Day15(private val input: URL) {
         }
 
         fun rangeX() = ((position.x - distance - 1)..(position.x + distance + 1))
+
+        fun borderPoints(): List<Point> {
+            return (position.y - (distance + 1)..position.y + (distance + 1)).flatMap { y ->
+                (position.x - (distance - 1).. position.x + (distance + 1)).map { x -> Point(x,y) }
+            }.distinct()
+        }
     }
 
     private fun parse(coordinate: String) = coordinate.split("=")[1].toInt()
@@ -79,10 +85,20 @@ class Day15(private val input: URL) {
         val lines = File(input.toURI()).readLines()
         val sensors = lines.mapIndexed{ idx, line -> parse(idx, line) }
 
-        val distressBeacon = searchPoints(space)
-            .filter { sensors.isNotInBeaconExclusionZone(it) }
-        require(distressBeacon.size == 1) { "Found more than one position for distress beacon" }
-
-        return distressBeacon.first().tuningFrequency()
+        var result: Point? = null
+        for (y in 0..space) {
+            for (x in 0..space) {
+                val inRangeOfSensor = sensors.isInBeaconExclusionZone(Point(x, y))
+                if (inRangeOfSensor) {
+                    continue
+                } else {
+                    result = Point(x, y)
+                    break
+                }
+            }
+        }
+        println("result: $result")
+        require(result != null) { "No distress beacon found" }
+        return result.tuningFrequency()
     }
 }
