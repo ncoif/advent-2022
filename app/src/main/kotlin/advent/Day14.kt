@@ -36,6 +36,10 @@ class Day14(private val input: URL) {
 
         private fun position(x: Int, y: Int) = cells[x(x) + y(y) * width]
 
+        fun isOutsideGrid(x: Int, y: Int) : Boolean {
+            return (x(x) < 0 || x(x) >= width || y(y) < 0 || y(y) >= height)
+        }
+
         fun print() {
             for (y in 0 until height) {
                 for (x in 0 until width) {
@@ -71,6 +75,33 @@ class Day14(private val input: URL) {
                 throw IllegalArgumentException("diagonal lines not supported")
             }
         }
+
+        // return true if the sand was placed, false if the sand fell outside the board
+        fun simulateOneSand() : Boolean {
+            var current = Point(500, 0)
+            while (true) {
+                if (isOutsideGrid(current.x, current.y + 1)) {
+                    return false
+                } else if (isOutsideGrid(current.x - 1, current.y + 1)) {
+                    return false
+                } else if (isOutsideGrid(current.x + 1, current.y + 1)) {
+                    return false
+                } else if (position(current.x, current.y + 1) == Type.AIR) {
+                    // can move under
+                    current = Point(current.x, current.y + 1)
+                } else if (position(current.x - 1, current.y + 1) == Type.AIR) {
+                    // can move diagonal left
+                    current = Point(current.x - 1, current.y + 1)
+                } else if (position(current.x + 1, current.y + 1) == Type.AIR) {
+                    // can move diagonal right
+                    current = Point(current.x + 1, current.y + 1)
+                } else {
+                    // cannot move
+                    position(current.x, current.y, Type.SAND)
+                    return true
+                }
+            }
+        }
     }
 
     private fun parse(lines: List<String>) : List<RockLine> {
@@ -104,7 +135,13 @@ class Day14(private val input: URL) {
         val lines = File(input.toURI()).readLines()
         val rockLines = parse(lines)
         val grid = makeGrid(rockLines)
+
+        var canAddMoreSand = true
+        while(canAddMoreSand) {
+            canAddMoreSand = grid.simulateOneSand()
+        }
         grid.print()
+
         return 0
     }
 }
