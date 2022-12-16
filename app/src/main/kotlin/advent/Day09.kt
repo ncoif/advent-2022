@@ -60,9 +60,13 @@ class Day09(private val input: URL) {
                 Position(x + 1, y - 1), // bottom right
             )
         }
+
+        fun distance(other: Position) : Int {
+            return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y)
+        }
     }
 
-    data class State(var headPosition : Position, var tailPosition: Position, val pastPositions : MutableList<Position>) {
+    data class State(var headPosition : Position, var tailPosition: Position, val pastPositions : MutableSet<Position>) {
         fun playMove(move: Move) {
             (0 until move.distance).forEach{ _ ->
                 playDirection(move.direction)
@@ -86,17 +90,21 @@ class Day09(private val input: URL) {
 
         private fun findNewTailPosition() : Position {
             // try all neighbour position until one is valid
+            var minDistance = 1000
+            var closestPosition = tailPosition
             for (neighbour in tailPosition.allNeighbour()) {
-                if (neighbour.isNeighbour(headPosition)) {
-                    return neighbour
+                val distanceToHead = neighbour.distance(headPosition)
+                if (distanceToHead < minDistance) {
+                    minDistance = distanceToHead
+                    closestPosition = neighbour
                 }
             }
-            throw IllegalArgumentException("No valid tail position found")
+            return closestPosition
         }
     }
 
-    fun initialState() : State {
-        return State(Position(0, 0), Position(0, 0), mutableListOf(Position(0, 0)))
+    private fun initialState() : State {
+        return State(Position(0, 0), Position(0, 0), mutableSetOf(Position(0, 0)))
     }
 
     fun solvePart1(): Int {
@@ -106,7 +114,8 @@ class Day09(private val input: URL) {
         val state = initialState()
         moves.forEach { state.playMove(it) }
 
-        return 0
+        println(state)
+        return state.pastPositions.size
     }
 
 }

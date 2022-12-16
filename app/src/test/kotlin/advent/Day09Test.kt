@@ -14,7 +14,7 @@ internal class Day09Test {
 
     @Test
     fun testMoveTailHorizontally() {
-        val state = Day09.State(Position(2, 1), Position(1, 1), mutableListOf(Position(2, 1), Position(1, 1)))
+        val state = Day09.State(Position(2, 1), Position(1, 1), mutableSetOf(Position(2, 1), Position(1, 1)))
 
         state.playMove(Day09.Move(Day09.Direction.RIGHT, 1))
 
@@ -24,7 +24,7 @@ internal class Day09Test {
 
     @Test
     fun testMoveTailVertically() {
-        val state = Day09.State(Position(1, 2), Position(1, 3), mutableListOf(Position(1, 2), Position(1, 3)))
+        val state = Day09.State(Position(1, 2), Position(1, 3), mutableSetOf(Position(1, 2), Position(1, 3)))
 
         state.playMove(Day09.Move(Day09.Direction.DOWN, 1))
 
@@ -34,7 +34,7 @@ internal class Day09Test {
 
     @Test
     fun testMoveTailDiagonally1() {
-        val state = Day09.State(Position(2, 2), Position(1, 1), mutableListOf(Position(2, 2), Position(1, 1)))
+        val state = Day09.State(Position(2, 2), Position(1, 1), mutableSetOf(Position(2, 2), Position(1, 1)))
 
         state.playMove(Day09.Move(Day09.Direction.UP, 1))
 
@@ -44,7 +44,7 @@ internal class Day09Test {
 
     @Test
     fun testMoveTailDiagonally2() {
-        val state = Day09.State(Position(2, 2), Position(1, 1), mutableListOf(Position(2, 2), Position(1, 1)))
+        val state = Day09.State(Position(2, 2), Position(1, 1), mutableSetOf(Position(2, 2), Position(1, 1)))
 
         state.playMove(Day09.Move(Day09.Direction.RIGHT, 1))
 
