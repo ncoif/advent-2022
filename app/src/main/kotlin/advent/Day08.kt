@@ -44,6 +44,26 @@ class Day08(private val input: URL) {
             }
             return visible
         }
+
+        fun scenicScore(w: Int, h: Int) : Int {
+            val viewingDistanceTop = viewingDistance(position(w, h), treesOnTop(w, h).reversed())
+            val viewingDistanceBottom = viewingDistance(position(w, h), treesOnBottom(w, h))
+            val viewingDistanceLeft = viewingDistance(position(w, h), treesOnLeft(w, h).reversed())
+            val viewingDistanceRight = viewingDistance(position(w, h), treesOnRight(w, h))
+
+            return viewingDistanceTop * viewingDistanceBottom * viewingDistanceLeft * viewingDistanceRight
+        }
+
+        private fun viewingDistance(tree: Tree, neighbours: List<Tree>) : Int {
+            var viewingDistance = 0
+            for (neighbour in neighbours) {
+                viewingDistance += 1
+                if (neighbour.height >= tree.height) {
+                    break // view is blocked, stop counting
+                }
+            }
+            return viewingDistance
+        }
     }
 
     fun parseGrid(lines: List<String>) : Grid {
@@ -67,5 +87,17 @@ class Day08(private val input: URL) {
         }
 
         return visibleCount
+    }
+
+    fun solvePart2(): Int {
+        val grid = parseGrid(File(input.toURI()).readLines())
+
+        var maxScenicScore = 0
+        for (w in 0 until grid.width) {
+            for (h in 0 until grid.height) {
+                maxScenicScore = maxOf(maxScenicScore, grid.scenicScore(w, h))
+            }
+        }
+        return maxScenicScore
     }
 }

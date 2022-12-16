@@ -71,7 +71,21 @@ internal class Day08Test {
     }
 
     @Test
+    fun testScenicScore() {
+        val testInput = this.javaClass.getResource("/day08-test-input.txt")!!
+        val grid = underTest().parseGrid(File(testInput.toURI()).readLines())
+
+        assertEquals(4, grid.scenicScore(2, 1))
+        assertEquals(8, grid.scenicScore(2, 3))
+    }
+
+    @Test
     fun solvePart1() {
         assertEquals(21, underTest().solvePart1())
+    }
+
+    @Test
+    fun solvePart2() {
+        assertEquals(8, underTest().solvePart2())
     }
 }
