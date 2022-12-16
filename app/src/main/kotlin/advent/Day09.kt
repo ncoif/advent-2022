@@ -73,13 +73,11 @@ class Day09(private val input: URL) {
         val pastTailPositions : MutableSet<Position>) {
 
         fun playMove(move: Move) {
-            println(move)
+            //println(move)
             (0 until move.distance).forEach{ _ ->
                 playDirection(move.direction)
                 moveTail()
-                printDebug()
             }
-            printDebug()
         }
 
         private fun playDirection(direction: Direction) {
@@ -101,10 +99,12 @@ class Day09(private val input: URL) {
 
         private fun findNewTailPosition(tailIdx: Int) : Position {
             // try all neighbour position until one is valid
+            val previousTailSegment = if (tailIdx == 0) { headPosition } else { tailPosition[tailIdx - 1] }
+
             var minDistance = 1000
             var closestPosition = tailPosition[tailIdx]
             for (neighbour in tailPosition[tailIdx].allNeighbour()) {
-                val distanceToHead = neighbour.distance(headPosition)
+                val distanceToHead = neighbour.distance(previousTailSegment)
                 if (distanceToHead < minDistance) {
                     minDistance = distanceToHead
                     closestPosition = neighbour
@@ -183,6 +183,4 @@ class Day09(private val input: URL) {
 
         return state.pastTailPositions.size
     }
-
-
 }
